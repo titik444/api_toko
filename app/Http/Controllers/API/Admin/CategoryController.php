@@ -37,7 +37,7 @@ class CategoryController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
+            return $this->sendError('Validation Error.', $validator->errors(), 403);
         }
 
         $category = Category::create($input);
@@ -78,7 +78,7 @@ class CategoryController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
+            return $this->sendError('Validation Error.', $validator->errors(), 403);
         }
 
         // update to database

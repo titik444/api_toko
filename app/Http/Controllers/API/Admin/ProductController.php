@@ -46,7 +46,7 @@ class ProductController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
+            return $this->sendError('Validation Error.', $validator->errors(), 403);
         }
 
         // upload process here
@@ -101,7 +101,7 @@ class ProductController extends BaseController
         ]);
 
         if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors());
+            return $this->sendError('Validation Error.', $validator->errors(), 403);
         }
 
         // update to database
