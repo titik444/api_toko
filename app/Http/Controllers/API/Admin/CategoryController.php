@@ -6,6 +6,8 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Http\Request;
 use App\Models\Category;
 
+use Validator;
+
 class CategoryController extends BaseController
 {
     /**
@@ -67,7 +69,7 @@ class CategoryController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, $id)
     {
         $input = $request->all();
 
@@ -79,8 +81,10 @@ class CategoryController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $category->name = $input['name'];
-        $category->save();
+        // update to database
+        $category = Category::find($id);
+
+        $category->update($input);
 
         return $this->sendResponse($category, 'Category updated successfully.');
     }
@@ -91,8 +95,10 @@ class CategoryController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy($id)
     {
+        $category = Category::find($id);
+
         $category->delete();
 
         return $this->sendResponse([], 'Category deleted successfully.');

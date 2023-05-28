@@ -6,6 +6,9 @@ use App\Http\Controllers\API\BaseController as BaseController;
 use Illuminate\Http\Request;
 use App\Models\User;
 
+use Hash;
+use Validator;
+
 class UserController extends BaseController
 {
     /**
@@ -32,11 +35,15 @@ class UserController extends BaseController
 
         $validator = Validator::make($input, [
             'name' => 'required',
+            'email' => 'required',
         ]);
 
         if ($validator->fails()) {
             return $this->sendError('Validation Error.', $validator->errors());
         }
+
+        // hash password
+        $input['password'] = Hash::make('user1234');
 
         $user = User::create($input);
 
@@ -73,6 +80,7 @@ class UserController extends BaseController
 
         $validator = Validator::make($input, [
             'name' => 'required',
+            'email' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -80,6 +88,7 @@ class UserController extends BaseController
         }
 
         $user->name = $input['name'];
+        $user->email = $input['email'];
         $user->save();
 
         return $this->sendResponse($user, 'User updated successfully.');

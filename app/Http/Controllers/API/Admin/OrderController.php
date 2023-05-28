@@ -5,6 +5,9 @@ namespace App\Http\Controllers\API\Admin;
 use App\Http\Controllers\API\BaseController as BaseController;
 use App\Models\Order;
 
+// use everything here
+use Auth;
+
 class OrderController extends BaseController
 {
     /**

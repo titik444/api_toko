@@ -8,6 +8,7 @@ use App\Models\Product;
 
 use Storage;
 use Validator;
+use File;
 
 class ProductController extends BaseController
 {
@@ -90,7 +91,7 @@ class ProductController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product)
+    public function update(Request $request, $id)
     {
         $input = $request->all();
 
@@ -103,8 +104,8 @@ class ProductController extends BaseController
             return $this->sendError('Validation Error.', $validator->errors());
         }
 
-        $product->name = $input['name'];
-        $product->price = $input['price'];
+        // update to database
+        $product = Product::find($id);
 
         // upload process here
         if (isset($input['photo'])) {
@@ -123,6 +124,7 @@ class ProductController extends BaseController
 
             // delete old photo from storage
             $input_old = 'storage/' . $get_item;
+
             if (File::exists($input_old)) {
                 File::delete($input_old);
             } else {
@@ -130,7 +132,7 @@ class ProductController extends BaseController
             }
         }
 
-        $product->save();
+        $product->update($input);
 
         return $this->sendResponse($product, 'Product updated successfully.');
     }
@@ -141,8 +143,10 @@ class ProductController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Product $product)
+    public function destroy($id)
     {
+        $product = Product::find($id);
+
         $product->delete();
 
         return $this->sendResponse([], 'Product deleted successfully.');
