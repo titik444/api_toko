@@ -60,7 +60,7 @@ class UserController extends BaseController
     {
         $user = User::find($id);
 
-        if (is_null($user)) {
+        if (!$user) {
             return $this->sendError('User not found.');
         }
 

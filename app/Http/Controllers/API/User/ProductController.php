@@ -37,10 +37,17 @@ class ProductController extends BaseController
     {
         $product = Product::where('slug', $slug)->first();
 
-        if (is_null($product)) {
+        if (!$product) {
             return $this->sendError('Product not found.');
         }
 
         return $this->sendResponse($product, 'Product retrieved successfully.');
+    }
+
+    public function featured()
+    {
+        $products = Product::orderBy('is_featured', 'DESC')->orderBy('updated_at', 'DESC')->limit(5)->get();
+
+        return $this->sendResponse($products, 'Products retrieved successfully.');
     }
 }

@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('product', function (Blueprint $table) {
-            $table->foreignId('category_id', 'fk_product_to_category')->references('id')->on('category')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->after('id', function (Blueprint $table) {
+                $table->foreignId('category_id', 'fk_product_to_category')->references('id')->on('category')->onUpdate('CASCADE')->onDelete('CASCADE');
+            });
         });
     }
 

@@ -3,8 +3,10 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\API\AuthController;
+use App\Http\Controllers\API\User\CartController;
 use App\Http\Controllers\API\User\CategoryController;
 use App\Http\Controllers\API\User\ProductController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -36,9 +38,13 @@ Route::middleware('auth:sanctum')->group(function () {
 
 Route::group(['prefix' => 'user', 'as' => 'user.'], function () {
     Route::resource('category', CategoryController::class);
+
+    Route::get('product/featured', [ProductController::class, 'featured']);
     Route::resource('product', ProductController::class);
 
     Route::middleware('auth:sanctum')->group(function () {
-        // Keranjang
+        Route::post('cart/add-cart', [CartController::class, 'addCart']);
+        Route::post('cart/pay-now', [CartController::class, 'payNow']);
+        Route::resource('cart', CartController::class);
     });
 });

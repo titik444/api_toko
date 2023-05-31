@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('order_product', function (Blueprint $table) {
+        Schema::table('cart', function (Blueprint $table) {
             $table->after('id', function (Blueprint $table) {
-                $table->foreignId('order_id', 'fk_order_product_to_order')->references('id')->on('order')->onUpdate('CASCADE')->onDelete('CASCADE');
-                $table->foreignId('product_id', 'fk_order_product_to_product')->references('id')->on('product')->onUpdate('CASCADE')->onDelete('CASCADE');
+                $table->foreignId('user_id', 'fk_cart_to_user')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
+                $table->foreignId('product_id', 'fk_cart_to_product')->references('id')->on('product')->onUpdate('CASCADE')->onDelete('CASCADE');
             });
         });
     }
@@ -24,7 +24,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('order_product', function (Blueprint $table) {
+        Schema::table('cart', function (Blueprint $table) {
             $table->dropForeign('fk_order_product_to_order');
             $table->dropForeign('fk_order_product_to_product');
         });

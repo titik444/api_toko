@@ -55,7 +55,7 @@ class CategoryController extends BaseController
     {
         $category = Category::find($id);
 
-        if (is_null($category)) {
+        if (!$category) {
             return $this->sendError('Category not found.');
         }
 

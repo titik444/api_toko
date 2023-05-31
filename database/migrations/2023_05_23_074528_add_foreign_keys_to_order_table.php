@@ -12,7 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('order', function (Blueprint $table) {
-            $table->foreignId('user_id', 'fk_order_to_user')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
+            $table->after('id', function (Blueprint $table) {
+                $table->foreignId('user_id', 'fk_order_to_user')->references('id')->on('users')->onUpdate('CASCADE')->onDelete('CASCADE');
+            });
         });
     }
 

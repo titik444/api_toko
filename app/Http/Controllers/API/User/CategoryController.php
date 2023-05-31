@@ -29,7 +29,7 @@ class CategoryController extends BaseController
     {
         $category = Category::with('product')->where('slug', $slug)->first();
 
-        if (is_null($category)) {
+        if (!$category) {
             return $this->sendError('Category not found.');
         }
 

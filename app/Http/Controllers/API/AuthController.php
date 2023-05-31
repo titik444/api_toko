@@ -20,8 +20,8 @@ class AuthController extends BaseController
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'email' => 'required|email|unique:users',
-            'password' => 'required',
-            'c_password' => 'required|same:password',
+            'password' => 'required|min:8',
+            'confirm_password' => 'required|same:password',
         ]);
 
         if ($validator->fails()) {
@@ -76,7 +76,7 @@ class AuthController extends BaseController
             'email' => 'required|email|exists:users',
             'phone' => 'required|regex:/(0)[0-9]{10,13}/|exists:users',
             'password' => 'required',
-            'c_password' => 'required|same:password',
+            'confirm_password' => 'required|same:password',
             'secret' => 'required|exists:users',
         ]);
 

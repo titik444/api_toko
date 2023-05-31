@@ -20,12 +20,13 @@ class Product extends Model
 
     // declare fillable fields
     protected $fillable = [
+        'category_id',
         'name',
         'slug',
         'description',
         'photo',
         'price',
-        'category_id',
+        'is_featured',
     ];
 
     public function category()
