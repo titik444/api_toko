@@ -4,9 +4,18 @@ namespace App\Http\Controllers\API;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\API\BaseController as BaseController;
-use App\Models\User;
+
+// use library here
+
+// request
+
+// use everything here
 use Illuminate\Support\Facades\Auth;
 use Validator;
+
+// use model here
+use App\Models\User;
+
 
 class AuthController extends BaseController
 {

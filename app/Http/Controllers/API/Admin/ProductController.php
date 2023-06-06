@@ -3,12 +3,22 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Http\Controllers\API\BaseController as BaseController;
-use Illuminate\Http\Request;
-use App\Models\Product;
 
+// use library here
+
+// request
+use App\Http\Requests\Product\StoreProductRequest;
+use App\Http\Requests\Product\UpdateProductRequest;
+
+// use everything here
+use Illuminate\Http\Request;
 use Storage;
 use Validator;
 use File;
+
+// use model here
+use App\Models\Product;
+
 
 class ProductController extends BaseController
 {
@@ -19,13 +29,29 @@ class ProductController extends BaseController
      */
     public function index(Request $request)
     {
-        $products = new Product;
+        $products = Product::query();
 
-        if ($request->category_id) {
-            $products = $products->where('category_id', $request->category_id);
+        // Search
+        if ($request->q) {
+            $products->where(function ($query) use ($request) {
+                $query->where('name', 'LIKE', "%{$request->q}%")
+                    ->orWhere('description', 'LIKE', "%{$request->q}%");
+            });
         }
 
-        $products = $products->get();
+        // Filter by Category ID
+        if ($request->category_id) {
+            $products->where('category_id', $request->category_id);
+        }
+
+        // Sorting
+        $sortField = $request->sf ?? 'id';
+        $sortOrder = $request->so === 'desc' ? 'desc' : 'asc';
+        $products->orderBy($sortField, $sortOrder);
+
+        // Limit
+        $limit = $request->limit ?? 10;
+        $products = $products->paginate($limit);
 
         return $this->sendResponse($products, 'Products retrieved successfully.');
     }
@@ -36,7 +62,7 @@ class ProductController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreProductRequest $request)
     {
         $input = $request->all();
 
@@ -91,7 +117,7 @@ class ProductController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateProductRequest $request, $id)
     {
         $input = $request->all();
 

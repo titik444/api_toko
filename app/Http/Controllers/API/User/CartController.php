@@ -3,14 +3,22 @@
 namespace App\Http\Controllers\API\User;
 
 use App\Http\Controllers\API\BaseController as BaseController;
+
+// use library here
+
+// request
+use App\Http\Requests\Cart\UpdateCartRequest;
+
+// use everything here
 use Illuminate\Http\Request;
+use Auth;
+use Validator;
+
+// use model here
 use App\Models\Cart;
 use App\Models\Order;
 use App\Models\OrderProduct;
 use App\Models\Product;
-
-use Auth;
-use Validator;
 
 
 class CartController extends BaseController
@@ -34,17 +42,9 @@ class CartController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Cart $cart)
+    public function update(UpdateCartRequest $request, Cart $cart)
     {
         $input = $request->all();
-
-        $validator = Validator::make($input, [
-            'total' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors(), 403);
-        }
 
         // update to database
         $cart->update($input);

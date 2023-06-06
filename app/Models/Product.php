@@ -10,7 +10,7 @@ use Spatie\Sluggable\SlugOptions;
 
 class Product extends Model
 {
-    // use HasFactory;
+    use HasFactory;
     use SoftDeletes;
     use HasSlug;
 

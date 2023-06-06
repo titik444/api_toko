@@ -3,11 +3,21 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Http\Controllers\API\BaseController as BaseController;
-use Illuminate\Http\Request;
-use App\Models\User;
 
+// use library here
+
+// request
+use App\Http\Requests\User\StoreUserRequest;
+use App\Http\Requests\User\UpdateUserRequest;
+
+// use everything here
+use Symfony\Component\HttpFoundation\Request;
 use Hash;
 use Validator;
+
+// use model here
+use App\Models\User;
+
 
 class UserController extends BaseController
 {
@@ -16,9 +26,26 @@ class UserController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
+        $users = User::query();
+
+        // Search
+        if ($request->q) {
+            $users->where(function ($query) use ($request) {
+                $query->where('name', 'LIKE', "%{$request->q}%")
+                    ->orWhere('email', 'LIKE', "%{$request->q}%");
+            });
+        }
+
+        // Sorting
+        $sortField = $request->sf ?? 'id';
+        $sortOrder = $request->so === 'desc' ? 'desc' : 'asc';
+        $users->orderBy($sortField, $sortOrder);
+
+        // Limit
+        $limit = $request->limit ?? 10;
+        $users = $users->paginate($limit);
 
         return $this->sendResponse($users, 'Users retrieved successfully.');
     }
@@ -29,18 +56,9 @@ class UserController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
         $input = $request->all();
-
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'email' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors(), 403);
-        }
 
         // hash password
         $input['password'] = Hash::make('user1234');
@@ -74,18 +92,9 @@ class UserController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user)
+    public function update(UpdateUserRequest $request, User $user)
     {
         $input = $request->all();
-
-        $validator = Validator::make($input, [
-            'name' => 'required',
-            'email' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors(), 403);
-        }
 
         $user->name = $input['name'];
         $user->email = $input['email'];

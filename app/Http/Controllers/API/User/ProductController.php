@@ -3,7 +3,15 @@
 namespace App\Http\Controllers\API\User;
 
 use App\Http\Controllers\API\BaseController as BaseController;
+
+// use library here
+
+// request
+
+// use everything here
 use Illuminate\Http\Request;
+
+// use model here
 use App\Models\Product;
 
 

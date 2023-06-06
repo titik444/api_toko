@@ -3,10 +3,17 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Http\Controllers\API\BaseController as BaseController;
-use App\Models\Order;
+
+// use library here
+
+// request
 
 // use everything here
 use Auth;
+
+// use model here
+use App\Models\Order;
+
 
 class OrderController extends BaseController
 {
@@ -18,7 +25,8 @@ class OrderController extends BaseController
     public function index()
     {
         $orders = Order::withSum('order_product', 'total')
-            ->withSum('order_product', 'price');
+            ->withSum('order_product', 'price')
+            ->with('user');
 
         if (!Auth::user()->isAdmin()) {
             $orders = $orders->where('user_id', Auth::user()->id);

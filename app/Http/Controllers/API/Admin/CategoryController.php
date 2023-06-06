@@ -3,10 +3,19 @@
 namespace App\Http\Controllers\API\Admin;
 
 use App\Http\Controllers\API\BaseController as BaseController;
-use Illuminate\Http\Request;
+
+// use library here
+
+// request
+use App\Http\Requests\Category\StoreCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
+
+// use everything here
+use Symfony\Component\HttpFoundation\Request;
+
+// use model here
 use App\Models\Category;
 
-use Validator;
 
 class CategoryController extends BaseController
 {
@@ -15,9 +24,26 @@ class CategoryController extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $categories = Category::all();
+        $categories = Category::query();
+
+        // Search
+        if ($request->q) {
+            $categories->where(function ($query) use ($request) {
+                $query->where('name', 'LIKE', "%{$request->q}%")
+                    ->orWhere('description', 'LIKE', "%{$request->q}%");
+            });
+        }
+
+        // Sorting
+        $sortField = $request->sf ?? 'id';
+        $sortOrder = $request->so === 'desc' ? 'desc' : 'asc';
+        $categories->orderBy($sortField, $sortOrder);
+
+        // Limit
+        $limit = $request->limit ?? 10;
+        $categories = $categories->paginate($limit);
 
         return $this->sendResponse($categories, 'Categories retrieved successfully.');
     }
@@ -28,17 +54,9 @@ class CategoryController extends BaseController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(StoreCategoryRequest $request)
     {
         $input = $request->all();
-
-        $validator = Validator::make($input, [
-            'name' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors(), 403);
-        }
 
         $category = Category::create($input);
 
@@ -69,19 +87,10 @@ class CategoryController extends BaseController
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(UpdateCategoryRequest $request, $id)
     {
         $input = $request->all();
 
-        $validator = Validator::make($input, [
-            'name' => 'required',
-        ]);
-
-        if ($validator->fails()) {
-            return $this->sendError('Validation Error.', $validator->errors(), 403);
-        }
-
-        // update to database
         $category = Category::find($id);
 
         $category->update($input);
